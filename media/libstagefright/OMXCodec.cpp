@@ -59,7 +59,6 @@
 #include "include/avc_utils.h"
 
 #ifdef QCOM_HARDWARE
-#include <gralloc_priv.h>
 #include <QOMX_AudioExtensions.h>
 #include <OMX_QCOMExtns.h>
 #endif
@@ -68,11 +67,8 @@
 #include <sec_format.h>
 #endif
 
-#ifdef USE_TI_CUSTOM_DOMX
-#include <OMX_TI_Video.h>
-#include <OMX_TI_Index.h>
-#include <OMX_TI_IVCommon.h>
-#include <ctype.h>
+#ifdef QCOM_ICS_COMPAT
+#include <gralloc_priv.h>
 #endif
 
 namespace android {
@@ -107,7 +103,7 @@ const static int64_t kBufferFilledEventTimeOutNs = 3000000000LL;
 // component in question is buggy or not.
 const static uint32_t kMaxColorFormatSupported = 1000;
 
-#ifdef QCOM_HARDWARE
+#ifdef QCOM_ICS_COMPAT
 static const int QOMX_COLOR_FormatYUV420PackedSemiPlanar64x32Tile2m8ka = 0x7FA30C03;
 static const int OMX_QCOM_COLOR_FormatYVU420SemiPlanar = 0x7FA30C00;
 #endif
@@ -1622,6 +1618,7 @@ status_t OMXCodec::setVideoOutputFormat(
                || format.eColorFormat == OMX_COLOR_FormatCbYCrY
                || format.eColorFormat == OMX_TI_COLOR_FormatYUV420PackedSemiPlanar
                || format.eColorFormat == OMX_QCOM_COLOR_FormatYVU420SemiPlanar
+
                || format.eColorFormat == OMX_QCOM_COLOR_FormatYUV420PackedSemiPlanar64x32Tile2m8ka
                || format.eColorFormat == OMX_QCOM_COLOR_FormatYUV420PackedSemiPlanar32m
 #ifdef USE_SAMSUNG_COLORFORMAT
@@ -2182,12 +2179,25 @@ status_t OMXCodec::allocateOutputBuffersFromNativeWindow() {
     }
 
 #ifndef USE_SAMSUNG_COLORFORMAT
+
+#ifdef QCOM_ICS_COMPAT
+    int format = (eColorFormat ==
+                  OMX_QCOM_COLOR_FormatYUV420PackedSemiPlanar64x32Tile2m8ka)?
+                 HAL_PIXEL_FORMAT_YCbCr_420_SP_TILED : def.format.video.eColorFormat;
+#endif
+
     err = native_window_set_buffers_geometry(
             mNativeWindow.get(),
             def.format.video.nFrameWidth,
             def.format.video.nFrameHeight,
-            def.format.video.eColorFormat);
+#ifdef QCOM_ICS_COMPAT
+            format
 #else
+            def.format.video.eColorFormat
+#endif
+            );
+#else
+
     OMX_COLOR_FORMATTYPE eColorFormat;
 
     switch (def.format.video.eColorFormat) {
@@ -2208,6 +2218,7 @@ status_t OMXCodec::allocateOutputBuffersFromNativeWindow() {
             def.format.video.nFrameWidth,
             def.format.video.nFrameHeight,
             eColorFormat);
+
 #endif
 
     if (err != 0) {
