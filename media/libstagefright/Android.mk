@@ -86,6 +86,12 @@ LOCAL_C_INCLUDES:= \
         $(TOP)/system/core/include \
         $(TOP)/hardware/qcom/$(DISPLAY)/libgralloc
 
+ifeq ($(BOARD_USES_STE_FMRADIO),true)
+LOCAL_SRC_FILES += \
+        FMRadioSource.cpp                 \
+        PCMExtractor.cpp
+endif
+
 ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
 LOCAL_SRC_FILES += \
         ExtendedWriter.cpp                \
