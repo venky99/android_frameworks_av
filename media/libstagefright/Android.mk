@@ -1,6 +1,39 @@
 LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
+ifeq ($(BOARD_USES_ALSA_AUDIO),true)
+    ifeq ($(call is-chipset-in-board-platform,msm8960),true)
+        LOCAL_CFLAGS += -DUSE_TUNNEL_MODE
+    endif
+endif
+ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
+ifeq ($(TARGET_BOARD_PLATFORM),msm7x27a)
+    LOCAL_CFLAGS += -DUSE_AAC_HW_DEC
+endif
+
+ifeq ($(TARGET_BOARD_PLATFORM),msm7x27)
+    LOCAL_CFLAGS += -DTARGET7x27
+endif
+ifeq ($(TARGET_BOARD_PLATFORM),msm7x27a)
+    LOCAL_CFLAGS += -DTARGET7x27A
+endif
+ifeq ($(TARGET_BOARD_PLATFORM),msm7x30)
+    LOCAL_CFLAGS += -DTARGET7x30
+endif
+ifeq ($(TARGET_BOARD_PLATFORM),qsd8k)
+    LOCAL_CFLAGS += -DTARGET8x50
+endif
+ifeq ($(TARGET_BOARD_PLATFORM),msm8660)
+    LOCAL_CFLAGS += -DTARGET8x60
+endif
+ifeq ($(TARGET_BOARD_PLATFORM),msm8960)
+    LOCAL_CFLAGS += -DTARGET8x60
+endif
+ifeq ($(BOARD_CAMERA_USE_MM_HEAP),true)
+    LOCAL_CFLAGS += -DCAMERA_MM_HEAP
+endif
+endif
+
 include frameworks/av/media/libstagefright/codecs/common/Config.mk
 
 LOCAL_SRC_FILES:=                         \
@@ -67,7 +100,8 @@ LOCAL_C_INCLUDES:= \
         $(TOP)/frameworks/native/include/media/hardware \
         $(TOP)/external/flac/include \
         $(TOP)/external/tremolo \
-        $(TOP)/external/openssl/include
+        $(TOP)/external/openssl/include \
+        $(TOP)/hardware/qcom/display/libqdutils
 
 ifneq ($(TI_CUSTOM_DOMX_PATH),)
 LOCAL_C_INCLUDES += $(TI_CUSTOM_DOMX_PATH)/omx_core/inc
@@ -116,7 +150,6 @@ LOCAL_SRC_FILES += TunnelPlayer.cpp
 endif
 endif
 
-
 LOCAL_SHARED_LIBRARIES := \
         libbinder \
         libcamera_client \
@@ -131,6 +164,7 @@ LOCAL_SHARED_LIBRARIES := \
         liblog \
         libmedia \
         libmedia_native \
+        libqdutils \
         libsonivox \
         libssl \
         libstagefright_omx \
