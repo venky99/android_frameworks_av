@@ -100,8 +100,13 @@ LOCAL_C_INCLUDES:= \
         $(TOP)/frameworks/native/include/media/hardware \
         $(TOP)/external/flac/include \
         $(TOP)/external/tremolo \
-        $(TOP)/external/openssl/include \
-        $(TOP)/hardware/qcom/display/libqdutils
+        $(TOP)/external/openssl/include
+
+ifeq ($(TARGET_BOARD_PLATFORM),msm7x27)
+        LOCAL_C_INCLUDES += $(TOP)/hardware/qcom/display_legacy/libqdutils
+else
+        LOCAL_C_INCLUDES += $(TOP)/hardware/qcom/display/libqdutils
+endif
 
 ifneq ($(TI_CUSTOM_DOMX_PATH),)
 LOCAL_C_INCLUDES += $(TI_CUSTOM_DOMX_PATH)/omx_core/inc
