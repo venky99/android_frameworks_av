@@ -43,6 +43,7 @@
 #include <media/stagefright/Utils.h>
 #include <media/stagefright/SkipCutBuffer.h>
 #include <utils/Vector.h>
+#include <cutils/properties.h>
 
 #include <OMX_Audio.h>
 #include <OMX_Component.h>
@@ -54,6 +55,12 @@
 #include <OMX_QCOMExtns.h>
 #endif
 #include "include/avc_utils.h"
+
+#ifdef QCOM_HARDWARE
+#include <gralloc_priv.h>
+#include <QOMX_AudioExtensions.h>
+#include <OMX_QCOMExtns.h>
+#endif
 
 #ifdef USE_SAMSUNG_COLORFORMAT
 #include <sec_format.h>
