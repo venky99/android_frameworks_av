@@ -7,33 +7,6 @@ ifeq ($(BOARD_USES_ALSA_AUDIO),true)
         LOCAL_CFLAGS += -DTUNNEL_MODE_SUPPORTS_AMRWB
     endif
 endif
-ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
-ifeq ($(TARGET_BOARD_PLATFORM),msm7x27a)
-    LOCAL_CFLAGS += -DUSE_AAC_HW_DEC
-endif
-
-ifeq ($(TARGET_BOARD_PLATFORM),msm7x27)
-    LOCAL_CFLAGS += -DTARGET7x27
-endif
-ifeq ($(TARGET_BOARD_PLATFORM),msm7x27a)
-    LOCAL_CFLAGS += -DTARGET7x27A
-endif
-ifeq ($(TARGET_BOARD_PLATFORM),msm7x30)
-    LOCAL_CFLAGS += -DTARGET7x30
-endif
-ifeq ($(TARGET_BOARD_PLATFORM),qsd8k)
-    LOCAL_CFLAGS += -DTARGET8x50
-endif
-ifeq ($(TARGET_BOARD_PLATFORM),msm8660)
-    LOCAL_CFLAGS += -DTARGET8x60
-endif
-ifeq ($(TARGET_BOARD_PLATFORM),msm8960)
-    LOCAL_CFLAGS += -DTARGET8x60
-endif
-ifeq ($(BOARD_CAMERA_USE_MM_HEAP),true)
-    LOCAL_CFLAGS += -DCAMERA_MM_HEAP
-endif
-endif
 
 include frameworks/av/media/libstagefright/codecs/common/Config.mk
 
@@ -107,8 +80,11 @@ LOCAL_C_INCLUDES:= \
         $(TOP)/system/core/include
 
 ifeq ($(TARGET_BOARD_PLATFORM),msm7x27)
-        LOCAL_C_INCLUDES += $(TOP)/hardware/qcom/display_legacy/libgralloc \
-	$(TOP)/hardware/qcom/display_legacy/libqdutils
+ifeq ($(TARGET_QCOM_DISPLAY_VARIANT),mr1)
+        LOCAL_C_INCLUDES += $(TOP)/hardware/qcom/display_legacy-mr1/libgralloc
+else
+        LOCAL_C_INCLUDES += $(TOP)/hardware/qcom/display_legacy/libgralloc
+endif
 else
         LOCAL_C_INCLUDES += $(TOP)/hardware/qcom/display/libgralloc \
 	$(TOP)/hardware/qcom/display/libqdutils
