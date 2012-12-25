@@ -119,7 +119,7 @@ static sp<MediaSource> Make##name(const sp<MediaSource> &source, const sp<MetaDa
     return new name(source, meta); \
 }
 
-#ifdef QCOM_HARDWARE
+#ifdef QCOM_LEGACY_OMX
 class ColorFormatInfo {
     private:
         enum {
@@ -146,27 +146,8 @@ class ColorFormatInfo {
 };
 
 const int32_t ColorFormatInfo::preferredColorFormat[] = {
-#ifdef TARGET7x30
-    QOMX_COLOR_FormatYUV420PackedSemiPlanar64x32Tile2m8ka,
-    QOMX_COLOR_FormatYUV420PackedSemiPlanar64x32Tile2m8ka
-#endif
-#ifdef TARGET8x60
-    QOMX_COLOR_FormatYUV420PackedSemiPlanar64x32Tile2m8ka,
-    QOMX_COLOR_FormatYUV420PackedSemiPlanar64x32Tile2m8ka
-#endif
-#ifdef TARGET7x27
     OMX_QCOM_COLOR_FormatYVU420SemiPlanar,
     OMX_QCOM_COLOR_FormatYVU420SemiPlanar
-    //QOMX_COLOR_FormatYVU420PackedSemiPlanar32m4ka
-#endif
-#ifdef TARGET7x27A
-    OMX_QCOM_COLOR_FormatYVU420SemiPlanar,
-    OMX_QCOM_COLOR_FormatYVU420SemiPlanar
-#endif
-#ifdef TARGET8x50
-    OMX_QCOM_COLOR_FormatYVU420SemiPlanar,
-    QOMX_COLOR_FormatYVU420PackedSemiPlanar32m4ka
-#endif
 };
 #endif
 #define FACTORY_REF(name) { #name, Make##name },
@@ -426,7 +407,7 @@ uint32_t OMXCodec::getComponentQuirks(
     }
 #endif
 
-#if defined(QCOM_LEGACY_OMX) || !defined(QCOM_HARDWARE)
+#ifdef QCOM_LEGACY_OMX
     if (list->codecHasQuirk(
                 index, "requires-larger-encoder-output-buffer")) {
             quirks |= kRequiresLargerEncoderOutputBuffer;
@@ -1563,17 +1544,6 @@ status_t OMXCodec::setVideoOutputFormat(
         OMX_VIDEO_PARAM_PORTFORMATTYPE format;
         InitOMXParams(&format);
         format.nPortIndex = kPortIndexOutput;
-#if defined(QCOM_HARDWARE) && !defined(QCOM_LEGACY_OMX)
-        if (!strncmp(mComponentName, "OMX.qcom",8)) {
-            int32_t reqdColorFormat = ColorFormatInfo::getPreferredColorFormat(mOMXLivesLocally);
-            for(format.nIndex = 0;
-                    (OK == mOMX->getParameter(mNode, OMX_IndexParamVideoPortFormat, &format, sizeof(format)));
-                    format.nIndex++) {
-                if(format.eColorFormat == reqdColorFormat)
-                    break;
-            }
-        } else
-#endif
         format.nIndex = 0;
 
         status_t err = mOMX->getParameter(
@@ -1948,26 +1918,6 @@ status_t OMXCodec::allocateBuffersOnPort(OMX_U32 portIndex) {
     if (err != OK) {
         return err;
     }
-    
-#if defined(QCOM_HARDWARE) && !defined(QCOM_LEGACY_OMX)
-    if (mFlags & kUseMinBufferCount) {
-        def.nBufferCountActual = def.nBufferCountMin;
-        if (!mIsEncoder) {
-                if (portIndex == kPortIndexOutput) {
-                    def.nBufferCountActual += 2;
-                }else {
-                    def.nBufferCountActual += 1;
-                }
-        }
-        err = mOMX->setParameter(
-                    mNode, OMX_IndexParamPortDefinition, &def, sizeof(def));
-        if (err != OK) {
-            CODEC_LOGE("setting nBufferCountActual to %lu failed: %d",
-                    def.nBufferCountActual, err);
-            return err;
-        }
-    }
-#endif
 
     CODEC_LOGV("allocating %lu buffers of size %lu on %s port",
             def.nBufferCountActual, def.nBufferSize,
