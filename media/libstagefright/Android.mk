@@ -79,9 +79,8 @@ LOCAL_C_INCLUDES:= \
         $(TOP)/hardware/qcom/media/mm-core/inc \
         $(TOP)/system/core/include
 
-ifeq ($(TARGET_QCOM_MEDIA_VARIANT),caf)
-LOCAL_C_INCLUDES += \
-        $(TOP)/hardware/qcom/media-caf/mm-core/inc
+ifeq ($(TARGET_QCOM_DISPLAY_VARIANT),legacy)
+        LOCAL_C_INCLUDES += $(TOP)/hardware/qcom/display-legacy/libgralloc
 else
 LOCAL_C_INCLUDES += \
         $(TOP)/hardware/qcom/display-legacy/libgralloc \
