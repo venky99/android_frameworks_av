@@ -5,19 +5,20 @@ LOCAL_SRC_FILES:=                     \
         ColorConverter.cpp            \
         SoftwareRenderer.cpp
 
+ifeq ($(TARGET_QCOM_DISPLAY_VARIANT),caf)
+    DISPLAY := display-caf
+else
+    ifeq ($(TARGET_QCOM_DISPLAY_VARIANT),legacy)
+        DISPLAY := display-legacy
+    else
+        DISPLAY := display
+    endif
+endif
+
 LOCAL_C_INCLUDES := \
         $(TOP)/frameworks/native/include/media/openmax \
-        $(TOP)/hardware/msm7k
-        
-ifeq ($(TARGET_BOARD_PLATFORM),msm7x27)
-ifeq ($(TARGET_QCOM_DISPLAY_VARIANT),mr1)
-        LOCAL_C_INCLUDES += $(TOP)/hardware/qcom/display_legacy-mr1/libgralloc
-else
-        LOCAL_C_INCLUDES += $(TOP)/hardware/qcom/display_legacy/libgralloc
-endif
-else
-        LOCAL_C_INCLUDES += $(TOP)/hardware/qcom/display/libgralloc
-endif
+        $(TOP)/hardware/msm7k \
+        $(TOP)/hardware/qcom/$(DISPLAY)/libgralloc
 
 LOCAL_MODULE:= libstagefright_color_conversion
 
