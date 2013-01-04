@@ -5,6 +5,12 @@ LOCAL_SRC_FILES:=                     \
         ColorConverter.cpp            \
         SoftwareRenderer.cpp
 
+ifneq ($(TARGET_QCOM_DISPLAY_VARIANT),)
+    DISPLAY := display-$(TARGET_QCOM_DISPLAY_VARIANT)
+else
+    DISPLAY := display
+endif
+
 LOCAL_C_INCLUDES := \
         $(TOP)/frameworks/native/include/media/openmax \
         $(TOP)/hardware/msm7k
