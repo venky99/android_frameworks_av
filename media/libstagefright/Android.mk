@@ -64,18 +64,10 @@ LOCAL_SRC_FILES:=                         \
         mp4/FragmentedMP4Parser.cpp       \
         mp4/TrackFragment.cpp             \
 
-ifeq ($(BOARD_HAVE_QCOM_FM),true)
-LOCAL_SRC_FILES+=                         \
-        FMA2DPWriter.cpp
-
-ifeq ($(TARGET_QCOM_DISPLAY_VARIANT),caf)
-    DISPLAY := display-caf
+ifneq ($(TARGET_QCOM_DISPLAY_VARIANT),)
+    DISPLAY := display-$(TARGET_QCOM_DISPLAY_VARIANT)
 else
-    ifeq ($(TARGET_QCOM_DISPLAY_VARIANT),legacy)
-        DISPLAY := display-legacy
-    else
-        DISPLAY := display
-    endif
+    DISPLAY := display
 endif
 
 LOCAL_C_INCLUDES:= \
@@ -159,8 +151,6 @@ LOCAL_SHARED_LIBRARIES += \
         libdl
 
 LOCAL_CFLAGS += -Wno-multichar
-
-endif
 
 LOCAL_MODULE:= libstagefright
 
