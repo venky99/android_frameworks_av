@@ -6179,9 +6179,12 @@ AudioFlinger::DirectAudioTrack::~DirectAudioTrack() {
     AudioSystem::releaseOutput(mOutput);
     releaseWakeLock();
 
-    if (mPowerManager != 0) {
-        sp<IBinder> binder = mPowerManager->asBinder();
-        binder->unlinkToDeath(mDeathRecipient);
+    {
+        Mutex::Autolock _l(pmLock);
+        if (mPowerManager != 0) {
+            sp<IBinder> binder = mPowerManager->asBinder();
+            binder->unlinkToDeath(mDeathRecipient);
+        }
     }
 }
 

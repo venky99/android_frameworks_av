@@ -1553,17 +1553,17 @@ status_t AwesomePlayer::initAudioDecoder() {
     // and if no other tunnel mode instances aare running.
     ALOGD("Tunnel Mime Type: %s, object alive = %d, mTunnelAliveAP = %d",\
             mime, (TunnelPlayer::mTunnelObjectsAlive), mTunnelAliveAP);
-    if(((strcmp("true",tunnelDecode) == 0)||(atoi(tunnelDecode))) &&
-            (TunnelPlayer::mTunnelObjectsAlive == 0) &&
-             //widevine will fallback to software decoder
-            mTunnelAliveAP == 0 && (isADTS == 0) && mAudioSink->realtime() &&
-            ((!strcasecmp(mime, MEDIA_MIMETYPE_AUDIO_MPEG)) ||
-            (!strcasecmp(mime, MEDIA_MIMETYPE_AUDIO_AMR_WB))       ||
-            (!strcasecmp(mime, MEDIA_MIMETYPE_AUDIO_AMR_WB_PLUS))  ||
-            (!strcasecmp(mime,MEDIA_MIMETYPE_AUDIO_AAC)))) {
 
-        if(mVideoSource != NULL) {
-           char tunnelAVDecode[128];
+    bool sys_prop_enabled = !strcmp("true",tunnelDecode) || atoi(tunnelDecode);
+
+    //widevine will fallback to software decoder
+    if (sys_prop_enabled && (TunnelPlayer::mTunnelObjectsAlive == 0) &&
+        mTunnelAliveAP == 0 && (isADTS == 0) &&
+        mAudioSink->realtime() &&
+        inSupportedTunnelFormats(mime)) {
+
+        if (mVideoSource != NULL) {
+           char tunnelAVDecode[PROPERTY_VALUE_MAX];
            property_get("tunnel.audiovideo.decode",tunnelAVDecode,"0");
            sys_prop_enabled = !strncmp("true", tunnelAVDecode, 4) || atoi(tunnelAVDecode);
            if (sys_prop_enabled) {
@@ -3021,4 +3021,36 @@ inline int64_t AwesomePlayer::getTimeOfDayUs() {
 
     return (int64_t)tv.tv_sec * 1000000 + tv.tv_usec;
 }
+
+#ifdef USE_TUNNEL_MODE
+bool AwesomePlayer::inSupportedTunnelFormats(const char * mime) {
+    const char * tunnelFormats [ ] = {
+        MEDIA_MIMETYPE_AUDIO_MPEG,
+        MEDIA_MIMETYPE_AUDIO_AAC,
+#ifdef TUNNEL_MODE_SUPPORTS_AMRWB
+        MEDIA_MIMETYPE_AUDIO_AMR_WB,
+        MEDIA_MIMETYPE_AUDIO_AMR_WB_PLUS
+#endif
+    };
+
+    if (!mime) {
+        return false;
+    }
+
+    size_t len = sizeof(tunnelFormats)/sizeof(const char *);
+    for (size_t i = 0; i < len; i++) {
+        const char * tf = tunnelFormats[i];
+        if (!strncasecmp(mime, tf, strlen(tf))) {
+            if (strlen(mime) == strlen(tf)) { //to prevent a substring match
+                ALOGD("Tunnel playback supported for %s", tf);
+                return true;
+            }
+        }
+    }
+
+    ALOGW("Tunnel playback unsupported for %s", mime);
+    return false;
+}
+#endif
+
 }  // namespace android
