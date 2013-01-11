@@ -372,9 +372,29 @@ status_t TunnelPlayer::start(bool sourceAlreadyStarted) {
 status_t TunnelPlayer::seekTo(int64_t time_us) {
 
     ALOGV("seekTo: time_us %lld", time_us);
-    if ( mReachedEOS ) {
-        mReachedEOS = false;
-        mReachedOutputEOS = false;
+
+    //This can happen if the client calls seek
+    //without ever calling getPosition
+    if (mPositionTimeRealUs == -1) {
+        getOffsetRealTime_l(&mPositionTimeRealUs);
+    }
+
+    if (mPositionTimeRealUs > 0) {
+      //check for return conditions only if seektime
+      // is set
+      if (time_us > mPositionTimeRealUs){
+           if((time_us - mPositionTimeRealUs) < TUNNEL_BUFFER_TIME){
+             ALOGV("In seekTo(), ignoring time_us %lld mSeekTimeUs %lld", time_us, mSeekTimeUs);
+             mObserver->postAudioSeekComplete();
+             return OK;
+           }
+      } else {
+           if((mPositionTimeRealUs - time_us) < TUNNEL_BUFFER_TIME){
+               ALOGV("In seekTo(), ignoring time_us %lld mSeekTimeUs %lld", time_us, mSeekTimeUs);
+               mObserver->postAudioSeekComplete();
+               return OK;
+           }
+      }
     }
     mSeeking = true;
     mSeekTimeUs = time_us;
@@ -482,16 +502,10 @@ void TunnelPlayer::reset() {
         mInputBuffer = NULL;
     }
 
-    mSource->stop();
+    if (mStarted)
+        mSource->stop();
 
-    // The following hack is necessary to ensure that the OMX
-    // component is completely released by the time we may try
-    // to instantiate it again.
-    wp<MediaSource> tmp = mSource;
     mSource.clear();
-    while (tmp.promote() != NULL) {
-        usleep(1000);
-    }
 
     mPositionTimeMediaUs = -1;
     mPositionTimeRealUs = -1;
