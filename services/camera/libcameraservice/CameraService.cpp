@@ -68,6 +68,8 @@ static int getCallingUid() {
     return IPCThreadState::self()->getCallingUid();
 }
 
+// ----------------------------------------------------------------------------
+
 #if defined(BOARD_HAVE_HTC_FFC)
 #define HTC_SWITCH_CAMERA_FILE_PATH "/sys/android_camera2/htcwc"
 static void htcCameraSwitch(int cameraId)
@@ -381,10 +383,10 @@ void CameraService::loadSound() {
     if (mSoundRef++) return;
 
     char value[PROPERTY_VALUE_MAX];
-    property_get("persist.sys.camera-sound", value, "1");
-    int enableSound = atoi(value);
+    property_get("persist.camera.shutter.disable", value, "0");
+    int disableSound = atoi(value);
 
-    if(enableSound) {
+    if(!disableSound) {
         mSoundPlayer[SOUND_SHUTTER] = newMediaPlayer("/system/media/audio/ui/camera_click.ogg");
         mSoundPlayer[SOUND_RECORDING] = newMediaPlayer("/system/media/audio/ui/VideoRecord.ogg");
     }
