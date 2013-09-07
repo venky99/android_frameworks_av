@@ -227,7 +227,7 @@ const char CameraParameters::HISTOGRAM_DISABLE[] = "disable";
 const char CameraParameters::SKIN_TONE_ENHANCEMENT_ENABLE[] = "enable";
 const char CameraParameters::SKIN_TONE_ENHANCEMENT_DISABLE[] = "disable";
 
-onst char CameraParameters::KEY_SHARPNESS[] = "sharpness";
+const char CameraParameters::KEY_SHARPNESS[] = "sharpness";
 #ifdef QCOM_HARDWARE
 const char CameraParameters::KEY_MAX_SHARPNESS[] = "sharpness-max";
 const char CameraParameters::KEY_MIN_SHARPNESS[] = "sharpness-min";
