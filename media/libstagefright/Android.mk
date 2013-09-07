@@ -64,6 +64,11 @@ LOCAL_SRC_FILES:=                         \
         mp4/FragmentedMP4Parser.cpp       \
         mp4/TrackFragment.cpp             \
 
+ifeq ($(BOARD_HAVE_QCOM_FM),true)
+LOCAL_SRC_FILES+=                         \
+        FMA2DPWriter.cpp
+endif
+
 ifneq ($(TARGET_QCOM_DISPLAY_VARIANT),)
     DISPLAY := display-$(TARGET_QCOM_DISPLAY_VARIANT)
 else
