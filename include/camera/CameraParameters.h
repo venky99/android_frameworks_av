@@ -203,6 +203,10 @@ public:
     // header.
     // Example value: "21.0" or "-5". Write only.
     static const char KEY_GPS_ALTITUDE[];
+#ifdef QCOM_HARDWARE
+    static const char KEY_SKIN_TONE_ENHANCEMENT[] ;
+    static const char KEY_SUPPORTED_SKIN_TONE_ENHANCEMENT_MODES[] ;
+#endif
     // GPS timestamp (UTC in seconds since January 1, 1970). This should be
     // stored in JPEG EXIF header.
     // Example value: "1251192757". Write only.
@@ -505,7 +509,23 @@ public:
     // captured pictures.
     // Example value: "true" or "false". Read only.
     static const char KEY_VIDEO_SNAPSHOT_SUPPORTED[];
+    static const char KEY_FULL_VIDEO_SNAP_SUPPORTED[];
 
+#ifdef QCOM_HARDWARE
+    static const char KEY_ISO_MODE[];
+    static const char KEY_SUPPORTED_ISO_MODES[];
+    static const char KEY_LENSSHADE[] ;
+    static const char KEY_SUPPORTED_LENSSHADE_MODES[] ;
+
+    static const char KEY_AUTO_EXPOSURE[];
+    static const char KEY_SUPPORTED_AUTO_EXPOSURE[];
+
+    static const char KEY_GPS_LATITUDE_REF[];
+    static const char KEY_GPS_LONGITUDE_REF[];
+    static const char KEY_GPS_ALTITUDE_REF[];
+    static const char KEY_GPS_STATUS[];
+    static const char KEY_EXIF_DATETIME[];
+#endif
     // The state of the video stabilization. If set to true, both the
     // preview stream and the recorded video stream are stabilized by
     // the camera. Only valid to set if KEY_VIDEO_STABILIZATION_SUPPORTED is
