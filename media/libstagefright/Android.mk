@@ -79,15 +79,13 @@ LOCAL_C_INCLUDES:= \
         $(TOP)/hardware/qcom/media/mm-core/inc \
         $(TOP)/system/core/include
 
-ifeq ($(TARGET_BOARD_PLATFORM),msm7x27)
-ifeq ($(TARGET_QCOM_DISPLAY_VARIANT),mr1)
-        LOCAL_C_INCLUDES += $(TOP)/hardware/qcom/display_legacy-mr1/libgralloc
+ifeq ($(TARGET_QCOM_MEDIA_VARIANT),caf)
+LOCAL_C_INCLUDES += \
+        $(TOP)/hardware/qcom/media-caf/mm-core/inc
 else
-        LOCAL_C_INCLUDES += $(TOP)/hardware/qcom/display_legacy/libgralloc
-endif
-else
-        LOCAL_C_INCLUDES += $(TOP)/hardware/qcom/display/libgralloc \
-	$(TOP)/hardware/qcom/display/libqdutils
+LOCAL_C_INCLUDES += \
+        $(TOP)/hardware/qcom/display-legacy/libgralloc \
+        $(TOP)/hardware/qcom/media/mm-core/inc
 endif
 
 ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
