@@ -254,7 +254,7 @@ status_t FMA2DPWriter::writerthread(){
     prctl(PR_SET_NAME, (unsigned long)"FMA2DPWriterThread", 0, 0, 0);
 
     AudioTrack *audioTrack= new AudioTrack(
-                10,
+                AUDIO_STREAM_FM,
                 mSampleRate,
                 mAudioFormat,
                 outChannel,
