@@ -63,15 +63,12 @@ LOCAL_SRC_FILES:=                         \
         mp4/FragmentedMP4Parser.cpp       \
         mp4/TrackFragment.cpp             \
 
-<<<<<<< HEAD
-=======
 ifneq ($(TARGET_QCOM_DISPLAY_VARIANT),)
     DISPLAY := display-$(TARGET_QCOM_DISPLAY_VARIANT)
 else
     DISPLAY := display
 endif
 
->>>>>>> 70fe507... Simplify gralloc version selection
 LOCAL_C_INCLUDES:= \
         $(TOP)/frameworks/av/include/media/stagefright/timedtext \
         $(TOP)/frameworks/native/include/media/hardware \
