@@ -1,6 +1,13 @@
 LOCAL_PATH:= $(call my-dir)
 
-include $(CLEAR_VARS)
+ifeq ($(ARCH_ARM_HAVE_ARMV7A),true)
+AAC_LIBRARY = fraunhofer
+else
+AAC_LIBRARY = pv
+endif
+
+ifeq ($(AAC_LIBRARY), fraunhofer)
+  include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := \
       SoftAAC2.cpp
