@@ -98,16 +98,31 @@ LOCAL_SRC_FILES += \
         QCMediaDefs.cpp                   \
         QCOMXCodec.cpp                    \
         WAVEWriter.cpp                    \
-        ExtendedExtractor.cpp
+        ExtendedExtractor.cpp             \
+        QCUtilityClass.cpp
 
+ifeq ($(TARGET_QCOM_MEDIA_VARIANT),caf)
+LOCAL_C_INCLUDES += \
+        $(TOP)/hardware/qcom/media-caf/mm-core/inc
+else
 LOCAL_C_INCLUDES += \
         $(TOP)/hardware/qcom/media/mm-core/inc
+endif
 
 ifeq ($(TARGET_QCOM_AUDIO_VARIANT),caf)
+    ifeq ($(call is-board-platform-in-list,msm8660 msm7x27a msm7x30),true)
+        LOCAL_SRC_FILES += LPAPlayer.cpp
+    else
+        LOCAL_SRC_FILES += LPAPlayerALSA.cpp
+    endif
+    ifeq ($(BOARD_USES_ALSA_AUDIO),true)
+        ifeq ($(call is-chipset-in-board-platform,msm8960),true)
+            LOCAL_CFLAGS += -DUSE_TUNNEL_MODE
+            LOCAL_CFLAGS += -DTUNNEL_MODE_SUPPORTS_AMRWB
+        endif
+    endif
 LOCAL_CFLAGS += -DQCOM_ENHANCED_AUDIO
-LOCAL_SRC_FILES += \
-        LPAPlayerALSA.cpp                 \
-        TunnelPlayer.cpp
+LOCAL_SRC_FILES += TunnelPlayer.cpp
 endif
 endif
 
@@ -160,6 +175,9 @@ LOCAL_SHARED_LIBRARIES += \
         libstagefright_avc_common \
         libstagefright_foundation \
         libdl
+
+ifeq ($(BOARD_USE_SAMSUNG_COLORFORMAT), true)
+LOCAL_CFLAGS += -DUSE_SAMSUNG_COLORFORMAT
 
 LOCAL_CFLAGS += -Wno-multichar
 
