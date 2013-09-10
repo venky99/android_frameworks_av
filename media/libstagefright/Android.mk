@@ -98,8 +98,7 @@ LOCAL_SRC_FILES += \
         QCMediaDefs.cpp                   \
         QCOMXCodec.cpp                    \
         WAVEWriter.cpp                    \
-        ExtendedExtractor.cpp             \
-        QCUtilityClass.cpp
+        ExtendedExtractor.cpp
 
 ifeq ($(TARGET_QCOM_MEDIA_VARIANT),caf)
 LOCAL_C_INCLUDES += \
