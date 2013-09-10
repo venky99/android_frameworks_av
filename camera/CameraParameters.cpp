@@ -70,6 +70,7 @@ const char CameraParameters::PANORAMA_MODE_INPROGRESS[] = "in-progress";
 const char CameraParameters::KEY_PICTURE_SIZE[] = "picture-size";
 const char CameraParameters::KEY_SUPPORTED_PICTURE_SIZES[] = "picture-size-values";
 const char CameraParameters::KEY_PICTURE_FORMAT[] = "picture-format";
+const char CameraParameters::KEY_SUPPORTED_3D_FILE_FORMAT[] = "3d-file-format";
 const char CameraParameters::KEY_SUPPORTED_PICTURE_FORMATS[] = "picture-format-values";
 const char CameraParameters::KEY_JPEG_THUMBNAIL_WIDTH[] = "jpeg-thumbnail-width";
 const char CameraParameters::KEY_JPEG_THUMBNAIL_HEIGHT[] = "jpeg-thumbnail-height";
@@ -204,8 +205,11 @@ const char CameraParameters::CAPTURE_MODE_ZOE[] = "zoe";
 const char CameraParameters::KEY_CONTI_BURST_STATE[] = "contiburst-state";
 const char CameraParameters::KEY_SUPPORTED_CAPTURE_MODES[] = "capture-mode-values";
 const char CameraParameters::KEY_MIN_CONTRAST[] = "contrast-min";
+const char CameraParameters::KEY_DEF_CONTRAST[] = "contrast-def";
 const char CameraParameters::KEY_MIN_SHARPNESS[] = "sharpness-min";
+const char CameraParameters::KEY_DEF_SHARPNESS[] = "sharpness-def";
 const char CameraParameters::KEY_MIN_SATURATION[] = "saturation-min";
+const char CameraParameters::KEY_DEF_SATURATION[] = "saturation-def";
 const char CameraParameters::KEY_SINGLE_ISP_OUTPUT_ENABLED[] = "single-isp-output-enabled";
 const char CameraParameters::POST_PROCESSING_ENABLE[] = "enable";
 const char CameraParameters::POST_PROCESSING_BYPASS[] = "bypass";
@@ -225,6 +229,35 @@ const char CameraParameters::KEY_GPU_EFFECT_PARAM_0[] = "GE-param0";
 const char CameraParameters::KEY_GPU_EFFECT_PARAM_1[] = "GE-param1";
 const char CameraParameters::KEY_GPU_EFFECT_PARAM_2[] = "GE-param2";
 const char CameraParameters::KEY_GPU_EFFECT_PARAM_3[] = "GE-param3";
+const char CameraParameters::KEY_FORCE_USE_AUDIO_ENABLED[] = "forceuseaudio";
+#endif
+
+#ifdef LG_CAMERA_HARDWARE
+const char CameraParameters::AUDIO_ZOOM_OFF[] = "audio-zoom";
+const char CameraParameters::AUDIO_ZOOM_ON[] = "audio-zoom";
+const char CameraParameters::BEAUTY_SHOT_OFF[] = "beauty-shot";
+const char CameraParameters::BEAUTY_SHOT_ON[] = "beauty-shot";
+const char CameraParameters::BURST_SHOT_OFF[] = "burst-shot";
+const char CameraParameters::BURST_SHOT_ON[] = "burst-shot";
+const char CameraParameters::KEY_AUDIO_ZOOM[] = "audio-zoom";
+const char CameraParameters::KEY_AUDIO_ZOOM_SUPPORTED[] = "audio-zoom-supported";
+const char CameraParameters::KEY_BEAUTY_SHOT[] = "beauty-shot";
+const char CameraParameters::KEY_BEAUTY_SHOT_SUPPORTED[] = "beauty-shot-supported";
+const char CameraParameters::KEY_BURST_SHOT[] = "burst-shot";
+const char CameraParameters::KEY_BURST_SHOT_SUPPORTED[] = "burst-shot-supported";
+const char CameraParameters::KEY_FOCUS_MODE_OBJECT_TRACKING[] = "object-tracking";
+const char CameraParameters::KEY_FOCUS_MODE_OBJECT_TRACKING_SUPPORTED[] = "object-tracking-supported";
+const char CameraParameters::KEY_VIDEO_WDR[] = "video-wdr";
+const char CameraParameters::KEY_VIDEO_WDR_SUPPORTED[] = "video-wdr-supported";
+const char CameraParameters::VIDEO_WDR_OFF[] = "video-wdr";
+const char CameraParameters::VIDEO_WDR_ON[] = "video-wdr";
+const char CameraParameters::OBJECT_TRACKING_ON[] = "object-tracking";
+const char CameraParameters::OBJECT_TRACKING_OFF[] = "object-tracking";
+#endif
+
+#ifdef ZTE_CAMERA_HARDWARE
+const char CameraParameters::KEY_SHUTTER_SOUND_SELECT[] = "shutter-sound-select";
+const char CameraParameters::KEY_SHUTTER_SOUND[] = "shutter-sound";
 #endif
 
 const char CameraParameters::TRUE[] = "true";
@@ -251,6 +284,15 @@ const char CameraParameters::EFFECT_POSTERIZE[] = "posterize";
 const char CameraParameters::EFFECT_WHITEBOARD[] = "whiteboard";
 const char CameraParameters::EFFECT_BLACKBOARD[] = "blackboard";
 const char CameraParameters::EFFECT_AQUA[] = "aqua";
+#ifdef SAMSUNG_CAMERA_HARDWARE
+const char CameraParameters::EFFECT_CARTOONIZE[] = "cartoonize";
+const char CameraParameters::EFFECT_POINT_RED_YELLOW[] = "point-red-yellow";
+const char CameraParameters::EFFECT_POINT_GREEN[] = "point-green";
+const char CameraParameters::EFFECT_POINT_BLUE[] = "point-blue";
+const char CameraParameters::EFFECT_VINTAGE_COLD[] = "vintage-cold";
+const char CameraParameters::EFFECT_VINTAGE_WARM[] = "vintage-warm";
+const char CameraParameters::EFFECT_WASHED[] = "washed";
+#endif
 #ifdef QCOM_HARDWARE
 const char CameraParameters::EFFECT_EMBOSS[] = "emboss";
 const char CameraParameters::EFFECT_SKETCH[] = "sketch";
@@ -419,6 +461,9 @@ const char CameraParameters::SELECTABLE_ZONE_AF_FRAME_AVERAGE[] = "frame-average
 // Values for Face Detection settings.
 const char CameraParameters::FACE_DETECTION_OFF[] = "off";
 const char CameraParameters::FACE_DETECTION_ON[] = "on";
+
+const char CameraParameters::FILE_FORMAT_MPO[] = "mpo";
+const char CameraParameters::FILE_FORMAT_JPS[] = "jps";
 
 // Values for MCE settings.
 const char CameraParameters::MCE_ENABLE[] = "enable";
@@ -832,6 +877,11 @@ void CameraParameters::getSupportedPictureSizes(Vector<Size> &sizes) const
 {
     const char *pictureSizesStr = get(KEY_SUPPORTED_PICTURE_SIZES);
     parseSizesList(pictureSizesStr, sizes);
+}
+
+void CameraParameters::set3DFileFormat(const char *format)
+{
+    set(KEY_SUPPORTED_3D_FILE_FORMAT, format);
 }
 
 void CameraParameters::setPictureFormat(const char *format)
