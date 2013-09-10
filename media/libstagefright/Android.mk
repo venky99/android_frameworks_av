@@ -176,9 +176,6 @@ LOCAL_SHARED_LIBRARIES += \
         libstagefright_foundation \
         libdl
 
-ifeq ($(BOARD_USE_SAMSUNG_COLORFORMAT), true)
-LOCAL_CFLAGS += -DUSE_SAMSUNG_COLORFORMAT
-
 LOCAL_CFLAGS += -Wno-multichar
 
 LOCAL_MODULE:= libstagefright
