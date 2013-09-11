@@ -585,7 +585,6 @@ public:
     // Example value: "true" or "false". Read only.
     static const char KEY_VIDEO_SNAPSHOT_SUPPORTED[];
     static const char KEY_FULL_VIDEO_SNAP_SUPPORTED[];
-    static const char KEY_POWER_MODE_SUPPORTED[];
 
 #ifdef QCOM_HARDWARE
     static const char KEY_ISO_MODE[];
