@@ -40,10 +40,15 @@
 
 #include "include/ESDS.h"
 
+#ifdef QCOM_HARDWARE
+#include "include/QCUtilityClass.h"
+#endif
+
 namespace android {
 
 static const int64_t kMinStreamableFileSizeInBytes = 5 * 1024 * 1024;
 static const int64_t kMax32BitFileSize = 0x007fffffffLL;
+static const int64_t kMax64BitFileSize = 0x00ffffffffLL; //fat32 max size limited to 4GB
 static const uint8_t kNalUnitTypeSeqParamSet = 0x07;
 static const uint8_t kNalUnitTypePicParamSet = 0x08;
 static const int64_t kInitialDelayTimeUs     = 700000LL;
@@ -525,11 +530,14 @@ status_t MPEG4Writer::start(MetaData *param) {
         mIsFileSizeLimitExplicitlyRequested = true;
     }
 
-    int32_t use64BitOffset;
+    int32_t use64BitOffset = 0;
     if (param &&
         param->findInt32(kKey64BitFileOffset, &use64BitOffset) &&
         use64BitOffset) {
         mUse32BitOffset = false;
+        if (mMaxFileSizeLimitBytes == 0) {
+            mMaxFileSizeLimitBytes = kMax64BitFileSize;
+        }
     }
 
     if (mUse32BitOffset) {
@@ -2157,6 +2165,12 @@ status_t MPEG4Writer::Track::threadEntry() {
         meta_data->findInt32(kKeyIsSyncFrame, &isSync);
         CHECK(meta_data->findInt64(kKeyTime, &timestampUs));
 
+#ifdef QCOM_HARDWARE
+        if(!mIsAudio) {
+            QCUtilityClass::helper_MPEG4Writer_hfr(mMeta, timestampUs);
+        }
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
         if (mStszTableEntries->count() == 0) {
             mFirstSampleTimeRealUs = systemTime() / 1000;
@@ -2186,6 +2200,10 @@ status_t MPEG4Writer::Track::threadEntry() {
              */
             int64_t decodingTimeUs;
             CHECK(meta_data->findInt64(kKeyDecodingTime, &decodingTimeUs));
+#ifdef QCOM_HARDWARE
+            QCUtilityClass::helper_MPEG4Writer_hfr(mMeta, decodingTimeUs);
+#endif
+
             decodingTimeUs -= previousPausedDurationUs;
             cttsOffsetTimeUs =
                     timestampUs + kMaxCttsOffsetTimeUs - decodingTimeUs;
